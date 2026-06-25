@@ -1,832 +1,433 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Carlos R. Rodas Cáceres | Cardiólogo Intervencionista</title>
+    <title>CardioVital | Protege tu Corazón con la Mejor Tecnología</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        display: ['Playfair Display', 'serif'],
-                        body: ['DM Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ========== BASE ========== */
-        body {
-            font-family: 'DM Sans', sans-serif;
-            margin: 0;
-            overflow-x: hidden;
+        /* --- VARIABLES DE TEMA (CLARO / OSCURO) --- */
+        :root[data-theme="dark"] {
+            --bg-main: #050507; --bg-secondary: #0f1012; --bg-card: rgba(255, 255, 255, 0.03);
+            --text-main: #ffffff; --text-muted: #a0a0a0; --border: rgba(255, 255, 255, 0.1);
+            --primary: #ff2e4c; --primary-glow: rgba(255, 46, 76, 0.4); --nav-bg: rgba(5, 5, 7, 0.9);
+            --form-bg: rgba(20, 20, 25, 0.8);
+        }
+        :root[data-theme="light"] {
+            --bg-main: #f8f9fa; --bg-secondary: #ffffff; --bg-card: rgba(0, 0, 0, 0.02);
+            --text-main: #1a1a1a; --text-muted: #555555; --border: rgba(0, 0, 0, 0.1);
+            --primary: #d90429; --primary-glow: rgba(217, 4, 41, 0.2); --nav-bg: rgba(255, 255, 255, 0.9);
+            --form-bg: rgba(255, 255, 255, 0.9);
         }
 
-        /* DARK MODE (default) */
-        body.dark {
-            background: #050510;
-            color: #e2e8f0;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Open Sans', sans-serif; background-color: var(--bg-main); color: var(--text-main); overflow-x: hidden; transition: background-color 0.4s ease, color 0.4s ease; }
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
+
+        /* --- INTRO CINEMÁTICA --- */
+        #intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050507; z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1); }
+        #intro-overlay.slide-up { transform: translateY(-100%); }
+        .ecg-path { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: dash 2s ease-in-out forwards; }
+        @keyframes dash { to { stroke-dashoffset: 0; } }
+        .intro-text { color: white; font-family: 'Montserrat'; font-weight: 900; font-size: 2rem; opacity: 0; transform: translateY(20px); animation: fadeUp 1s ease 1.5s forwards; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* --- NAVBAR --- */
+        header { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; transition: all 0.4s ease; background: transparent; }
+        header.scrolled { background: var(--nav-bg); backdrop-filter: blur(10px); padding: 15px 50px; border-bottom: 1px solid var(--border); }
+        .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 24px; text-decoration: none; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        .logo span { color: var(--primary); }
+        .nav-controls { display: flex; align-items: center; gap: 20px; }
+        nav ul { list-style: none; display: flex; gap: 30px; }
+        nav a { color: var(--text-muted); text-decoration: none; font-weight: 600; transition: color 0.3s; }
+        nav a:hover { color: var(--primary); }
+        .toggle-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; transition: all 0.3s; }
+        .toggle-btn:hover { border-color: var(--primary); color: var(--primary); transform: rotate(15deg); }
+        .btn-nav { background: var(--primary); color: white; padding: 10px 25px; border-radius: 30px; text-decoration: none; font-weight: 700; box-shadow: 0 0 15px var(--primary-glow); transition: transform 0.3s; }
+        .btn-nav:hover { transform: scale(1.05); color: white; }
+
+        /* --- HERO --- */
+        #hero { min-height: 100vh; display: flex; align-items: center; position: relative; padding: 100px 50px 50px; overflow: hidden; }
+        .hero-bg-ecg { position: absolute; top: 50%; left: 0; width: 100%; height: 200px; opacity: 0.1; transform: translateY(-50%); background-repeat: repeat-x; animation: scroll-ecg 10s linear infinite; }
+        @keyframes scroll-ecg { from { background-position: 0 0; } to { background-position: -1200px 0; } }
+        .hero-content { position: relative; z-index: 2; display: flex; align-items: center; gap: 60px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .hero-text { flex: 1; }
+        .hero-text h1 { font-size: 4.5rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px; background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-text p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 30px; max-width: 500px; }
+        .btn-cta { background: var(--primary); padding: 15px 40px; border-radius: 50px; color: white; text-decoration: none; font-weight: 700; font-size: 1.1rem; position: relative; overflow: hidden; transition: all 0.3s; display: inline-block; box-shadow: 0 10px 30px var(--primary-glow); border: none; cursor: pointer; }
+        .btn-cta::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: 0.5s; }
+        .btn-cta:hover::before { left: 100%; }
+        .btn-cta:hover { transform: translateY(-3px); }
+        .hero-image { flex: 1; position: relative; }
+        .hero-image img { width: 100%; border-radius: 20px; box-shadow: 0 20px 50px var(--primary-glow); animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        /* --- STATS --- */
+        #stats { padding: 80px 50px; background: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .stats-grid { display: flex; justify-content: space-around; max-width: 1000px; margin: 0 auto; text-align: center; flex-wrap: wrap; gap: 30px; }
+        .stat-item h3 { font-size: 3.5rem; color: var(--primary); font-weight: 900; }
+        .stat-item p { color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; }
+
+        /* --- SERVICIOS --- */
+        #services { padding: 120px 50px; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; margin-bottom: 60px; }
+        .section-title h2 { font-size: 3rem; font-weight: 700; }
+        .section-title p { color: var(--text-muted); margin-top: 15px; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .service-card { background: var(--bg-card); border: 1px solid var(--border); padding: 40px 30px; border-radius: 20px; backdrop-filter: blur(10px); transition: all 0.4s; }
+        .service-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 15px 40px var(--primary-glow); }
+        .card-icon { width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), #8b0000); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 25px; box-shadow: 0 5px 15px var(--primary-glow); color: white; }
+        .service-card h3 { font-size: 1.5rem; margin-bottom: 15px; }
+        .service-card p { color: var(--text-muted); line-height: 1.6; }
+
+        /* --- DOCTOR --- */
+        #doctor { padding: 120px 50px; background: var(--bg-secondary); }
+        .doctor-container { max-width: 1000px; margin: 0 auto; display: flex; gap: 60px; align-items: center; flex-wrap: wrap; }
+        .doctor-img { flex: 1; min-width: 300px; position: relative; }
+        .doctor-img img { width: 100%; border-radius: 20px; filter: grayscale(20%); transition: filter 0.4s; }
+        .doctor-img:hover img { filter: grayscale(0%); }
+        .doctor-text { flex: 1; min-width: 300px; }
+        .doctor-text h2 { font-size: 3rem; margin-bottom: 10px; }
+        .doctor-text h3 { color: var(--primary); font-size: 1.2rem; margin-bottom: 20px; font-weight: 500; }
+        .doctor-text p { color: var(--text-muted); margin-bottom: 30px; font-size: 1.1rem; font-style: italic; }
+
+        /* --- FORMULARIO DE AGENDAMIENTO --- */
+        #booking { padding: 120px 50px; max-width: 800px; margin: 0 auto; }
+        .form-container { background: var(--form-bg); border: 1px solid var(--border); padding: 50px; border-radius: 30px; backdrop-filter: blur(15px); box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main); }
+        .form-control { width: 100%; padding: 15px; background: var(--bg-main); border: 1px solid var(--border); border-radius: 10px; color: var(--text-main); font-family: 'Open Sans', sans-serif; font-size: 1rem; transition: border-color 0.3s; }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+        .form-row { display: flex; gap: 20px; }
+        .form-row .form-group { flex: 1; }
+
+        /* --- SCROLL REVEAL --- */
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 1s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- BOTONES FLOTANTES --- */
+        .floating-buttons { position: fixed; bottom: 30px; right: 30px; z-index: 900; display: flex; flex-direction: column; gap: 15px; }
+        .float-btn { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; text-decoration: none; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative; transition: transform 0.3s; }
+        .float-btn:hover { transform: scale(1.1); color: white; }
+        .float-btn.whatsapp { background: #25D366; }
+        .float-btn.facebook { background: #1877F2; }
+        .float-btn::before { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; background: inherit; z-index: -1; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.8); opacity: 0; } }
+
+        /* --- FOOTER --- */
+        footer { background: var(--bg-main); padding: 60px 50px; text-align: center; border-top: 1px solid var(--border); }
+        footer h2 { font-size: 2.5rem; margin-bottom: 20px; }
+        footer p { color: var(--text-muted); margin-bottom: 30px; }
+        footer .copyright { margin-top: 40px; font-size: 0.9rem; opacity: 0.6; }
+
+        /* --- RESPONSIVIDAD --- */
+        @media (max-width: 768px) {
+            header { padding: 15px 20px; }
+            .hero-content { flex-direction: column; text-align: center; }
+            .hero-text h1 { font-size: 2.5rem; }
+            .hero-text p { margin: 0 auto 30px; }
+            nav ul { display: none; }
+            #services, #doctor, #stats, #booking { padding: 60px 20px; }
+            .section-title h2, footer h2 { font-size: 2rem; }
+            .form-row { flex-direction: column; gap: 0; }
+            .form-container { padding: 30px; }
         }
-        body.dark .nav-bg { background: rgba(5,5,16,0.9); }
-        body.dark .card-bg { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); }
-        body.dark .card-bg-hover:hover { background: rgba(255,255,255,0.07); border-color: rgba(239,68,68,0.3); }
-        body.dark .input-bg { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: #e2e8f0; }
-        body.dark .input-bg:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
-        body.dark .text-main { color: #f1f5f9; }
-        body.dark .text-sub { color: #94a3b8; }
-        body.dark .text-dim { color: #64748b; }
-        body.dark .footer-bg { background: #08081a; }
-        body.dark .divider { background: linear-gradient(to right, transparent, rgba(239,68,68,0.2), transparent); }
-        body.dark .menu-bg { background: rgba(5,5,16,0.97); }
-        body.dark .badge-bg { background: rgba(10,10,30,0.92); border: 1.5px solid rgba(239,68,68,0.35); }
-        body.dark .hero-overlay { background: linear-gradient(to top, #050510, rgba(5,5,16,0.3), transparent); }
-        body.dark .map-filter { filter: grayscale(0.7) brightness(0.5) contrast(1.1); }
-
-        /* LIGHT MODE */
-        body.light {
-            background: #faf7f5;
-            color: #1e293b;
-        }
-        body.light .nav-bg { background: rgba(250,247,245,0.92); }
-        body.light .card-bg { background: #ffffff; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-        body.light .card-bg-hover:hover { background: #ffffff; border-color: rgba(220,38,38,0.25); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
-        body.light .input-bg { background: #ffffff; border: 1px solid rgba(0,0,0,0.12); color: #1e293b; }
-        body.light .input-bg:focus { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
-        body.light .text-main { color: #0f172a; }
-        body.light .text-sub { color: #475569; }
-        body.light .text-dim { color: #94a3b8; }
-        body.light .footer-bg { background: #f0ece8; }
-        body.light .divider { background: linear-gradient(to right, transparent, rgba(220,38,38,0.15), transparent); }
-        body.light .menu-bg { background: rgba(250,247,245,0.98); }
-        body.light .badge-bg { background: rgba(255,255,255,0.95); border: 1.5px solid rgba(220,38,38,0.3); }
-        body.light .hero-overlay { background: linear-gradient(to top, #faf7f5, rgba(250,247,245,0.4), transparent); }
-        body.light .map-filter { filter: grayscale(0.2) brightness(0.98); }
-        body.light .scroll-indicator { color: #64748b; }
-
-        /* ========== COMPONENTS ========== */
-        .gradient-text {
-            background: linear-gradient(135deg, #ef4444, #dc2626, #f87171);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        }
-
-        /* Preloader */
-        #preloader {
-            position: fixed; inset: 0; z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.5s, visibility 0.5s;
-        }
-        body.dark #preloader { background: #050510; }
-        body.light #preloader { background: #faf7f5; }
-        #preloader.gone { opacity: 0; visibility: hidden; pointer-events: none; }
-        .heart-beat { animation: hb 1.2s ease-in-out infinite; }
-        @keyframes hb { 0%,100%{transform:scale(1)} 15%{transform:scale(1.25)} 30%{transform:scale(1)} 45%{transform:scale(1.15)} 60%{transform:scale(1)} }
-
-        /* ECG */
-        .ecg-wrap { position: absolute; bottom: 25%; left: 0; width: 100%; height: 70px; overflow: hidden; opacity: 0.2; pointer-events: none; z-index: 1; }
-        .ecg-track { animation: ecgMove 5s linear infinite; }
-        .ecg-path { stroke: #ef4444; stroke-width: 2; fill: none; stroke-dasharray: 2000; stroke-dashoffset: 2000; animation: ecgDraw 3.5s linear infinite; }
-        @keyframes ecgMove { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-        @keyframes ecgDraw { to{stroke-dashoffset:0} }
-
-        /* Particles */
-        .particle {
-            position: absolute; border-radius: 50%; pointer-events: none;
-            background: radial-gradient(circle, rgba(239,68,68,0.5), rgba(239,68,68,0));
-            animation: pFloat linear infinite;
-        }
-        body.light .particle { background: radial-gradient(circle, rgba(220,38,38,0.25), rgba(220,38,38,0)); }
-        @keyframes pFloat {
-            0%{transform:translateY(100vh) scale(0);opacity:0}
-            10%{opacity:0.8} 90%{opacity:0.8}
-            100%{transform:translateY(-80px) scale(1);opacity:0}
-        }
-
-        /* Pulse rings */
-        .pulse-ring { position:absolute; border:2px solid rgba(239,68,68,0.2); border-radius:50%; animation:pRing 3s ease-out infinite; }
-        @keyframes pRing { 0%{transform:scale(0.5);opacity:1} 100%{transform:scale(2.5);opacity:0} }
-
-        /* Badge float */
-        .badge-float { animation: bFloat 3s ease-in-out infinite; }
-        @keyframes bFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-
-        /* Img shine */
-        .img-shine { position:relative; overflow:hidden; }
-        .img-shine::after {
-            content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
-            background:linear-gradient(to right,rgba(255,255,255,0) 0%,rgba(255,255,255,0.03) 45%,rgba(255,255,255,0.1) 50%,rgba(255,255,255,0.03) 55%,rgba(255,255,255,0) 100%);
-            transform:rotate(25deg) translateX(-150%); animation: shine 6s ease-in-out infinite;
-        }
-        @keyframes shine { 0%,100%{transform:rotate(25deg) translateX(-150%)} 50%{transform:rotate(25deg) translateX(150%)} }
-
-        /* Glow btn */
-        .glow-btn { position:relative; overflow:hidden; }
-        .glow-btn::after {
-            content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
-            background:conic-gradient(from 0deg,transparent,rgba(239,68,68,0.3) 90deg,transparent 180deg);
-            animation:gRot 4s linear infinite;
-        }
-        @keyframes gRot { to{transform:rotate(360deg)} }
-        .glow-btn-inner { position:relative; z-index:1; background:#050510; border-radius:inherit; }
-        body.light .glow-btn-inner { background:#faf7f5; }
-        .glow-btn:hover .glow-btn-inner { background:#dc2626; }
-
-        /* Social icons */
-        .soc-icon {
-            display:inline-flex; align-items:center; justify-content:center;
-            width:42px; height:42px; border-radius:12px; transition:all 0.3s ease;
-            background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
-        }
-        body.light .soc-icon { background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); }
-        .soc-icon:hover { transform:translateY(-3px) scale(1.05); }
-        .soc-icon.fb:hover { background:rgba(59,89,152,0.15); border-color:rgba(59,89,152,0.4); box-shadow:0 6px 20px rgba(59,89,152,0.2); }
-        .soc-icon.wa:hover { background:rgba(37,211,102,0.15); border-color:rgba(37,211,102,0.4); box-shadow:0 6px 20px rgba(37,211,102,0.2); }
-        .soc-icon.ig:hover { background:rgba(225,48,108,0.15); border-color:rgba(225,48,108,0.4); box-shadow:0 6px 20px rgba(225,48,108,0.2); }
-
-        /* FB pulse */
-        .fb-pulse { position:relative; }
-        .fb-pulse::before { content:''; position:absolute; inset:-4px; border-radius:16px; border:2px solid rgba(59,89,152,0.4); animation:fbp 2s ease-out infinite; }
-        @keyframes fbp { 0%{transform:scale(1);opacity:1} 100%{transform:scale(1.3);opacity:0} }
-
-        /* Theme toggle */
-        .theme-sw {
-            width:50px; height:28px; border-radius:14px; cursor:pointer; position:relative;
-            background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); transition:all 0.3s;
-        }
-        .theme-sw-knob {
-            width:22px; height:22px; border-radius:50%; background:#ef4444;
-            position:absolute; top:2px; left:2px; transition:left 0.35s cubic-bezier(0.68,-0.55,0.265,1.55);
-            display:flex; align-items:center; justify-content:center;
-        }
-        body.light .theme-sw-knob { left:24px; }
-
-        /* Service card */
-        .svc-card { transition: all 0.35s ease; position:relative; overflow:hidden; }
-        .svc-card::before {
-            content:''; position:absolute; inset:0;
-            background:linear-gradient(135deg,rgba(239,68,68,0.08),transparent);
-            opacity:0; transition:opacity 0.35s;
-        }
-        .svc-card:hover::before { opacity:1; }
-        .svc-card:hover { transform:translateY(-5px); }
-        .svc-card:hover .svc-icon { transform:scale(1.1); }
-        .svc-icon { transition:transform 0.35s; }
-
-        /* Form option */
-        .frm-opt {
-            cursor:pointer; transition:all 0.25s;
-            background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
-        }
-        body.light .frm-opt { background:rgba(0,0,0,0.02); border:1px solid rgba(0,0,0,0.1); }
-        .frm-opt:hover { border-color:rgba(239,68,68,0.4); }
-        .frm-opt.sel { border-color:#ef4444; background:rgba(239,68,68,0.08); }
-        .frm-opt.sel .frm-chk { background:#ef4444; border-color:#ef4444; }
-
-        /* Marquee */
-        .marquee-track { display:flex; animation:marq 35s linear infinite; }
-        @keyframes marq { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-
-        /* Scroll reveal - content VISIBLE by default, animates IN */
-        .sr { opacity:1; transform:translateY(0); transition:opacity 0.6s ease, transform 0.6s ease; }
-        .sr.pre { opacity:0.02; transform:translateY(25px); }
-        .sr.run { opacity:1; transform:translateY(0); }
-
-        /* CTA outline */
-        .cta-out { position:relative; overflow:hidden; }
-        .cta-out::before { content:''; position:absolute; inset:-2px; background:linear-gradient(135deg,#ef4444,#991b1b,#ef4444); background-size:300% 300%; animation:cGrad 4s ease infinite; border-radius:inherit; z-index:0; }
-        .cta-out::after { content:''; position:absolute; inset:1px; border-radius:inherit; z-index:1; transition:background 0.3s; }
-        body.dark .cta-out::after { background:#050510; }
-        body.light .cta-out::after { background:#faf7f5; }
-        .cta-out:hover::after { background:transparent; }
-        .cta-out span { position:relative; z-index:2; }
-        .cta-out:hover { box-shadow:0 8px 25px rgba(239,68,68,0.3); }
-        @keyframes cGrad { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-
-        /* Toast */
-        .toast-el { position:fixed; bottom:24px; right:24px; padding:14px 22px; border-radius:12px; z-index:9999; transform:translateX(130%); transition:transform 0.4s cubic-bezier(0.16,1,0.3,1); }
-        .toast-el.show { transform:translateX(0); }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width:5px; }
-        body.dark ::-webkit-scrollbar-track { background:#050510; }
-        body.light ::-webkit-scrollbar-track { background:#faf7f5; }
-        ::-webkit-scrollbar-thumb { background:#dc2626; border-radius:3px; }
-
-        /* Mobile menu */
-        .mob-menu { transform:translateX(100%); transition:transform 0.4s cubic-bezier(0.16,1,0.3,1); }
-        .mob-menu.open { transform:translateX(0); }
-
-        @media(max-width:768px){ .ecg-wrap{bottom:15%;height:45px;} }
     </style>
 </head>
-<body class="dark">
+<body>
 
-<!-- PRELOADER -->
-<div id="preloader">
-    <div class="heart-beat">
-        <svg width="50" height="50" viewBox="0 0 24 24"><path fill="#ef4444" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-    </div>
-</div>
-
-<!-- PARTICLES -->
-<div id="particles" class="fixed inset-0 pointer-events-none" style="z-index:0"></div>
-
-<!-- NAV -->
-<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 nav-bg" style="backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <a href="#" class="flex items-center gap-3 group">
-            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <span class="iconify text-white text-lg" data-icon="lucide:heart-pulse"></span>
-            </div>
-            <div>
-                <span class="font-display text-sm font-bold tracking-wide text-main">Dr. Rodas</span>
-                <span class="block text-[9px] uppercase tracking-[0.2em] text-red-400">Cardiólogo</span>
-            </div>
-        </a>
-        <div class="hidden lg:flex items-center gap-7">
-            <a href="#inicio" class="text-sm text-sub hover:text-red-400 transition-colors">Inicio</a>
-            <a href="#acerca" class="text-sm text-sub hover:text-red-400 transition-colors">Acerca de</a>
-            <a href="#servicios" class="text-sm text-sub hover:text-red-400 transition-colors">Servicios</a>
-            <a href="#testimonios" class="text-sm text-sub hover:text-red-400 transition-colors">Testimonios</a>
-            <a href="#ubicacion" class="text-sm text-sub hover:text-red-400 transition-colors">Ubicación</a>
-            <a href="#cita" class="text-sm text-sub hover:text-red-400 transition-colors">Contacto</a>
-        </div>
-        <div class="flex items-center gap-3">
-            <button id="themeBtn" class="theme-sw" aria-label="Tema claro/oscuro">
-                <div class="theme-sw-knob">
-                    <span id="themeIco" class="iconify text-white text-xs" data-icon="lucide:moon"></span>
-                </div>
-            </button>
-            <div class="hidden md:flex items-center gap-2">
-                <a href="https://www.facebook.com/DrCarlosRodas" target="_blank" class="soc-icon fb fb-pulse" title="Facebook"><span class="iconify text-[#1877F2] text-lg" data-icon="mdi:facebook"></span></a>
-                <a href="https://wa.me/529993490768" target="_blank" class="soc-icon wa" title="WhatsApp"><span class="iconify text-[#25D366] text-lg" data-icon="mdi:whatsapp"></span></a>
-            </div>
-            <a href="#cita" class="hidden sm:flex bg-red-600 hover:bg-red-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-red-600/25 items-center gap-2">
-                <span class="iconify text-sm" data-icon="lucide:calendar-check"></span>Agendar Cita
-            </a>
-            <button id="mobBtn" class="lg:hidden text-main p-2"><span class="iconify text-2xl" data-icon="lucide:menu"></span></button>
-        </div>
-    </div>
-</nav>
-
-<!-- MOBILE MENU -->
-<div id="mobMenu" class="mob-menu fixed inset-0 z-[60] menu-bg flex flex-col items-center justify-center gap-6">
-    <button id="mobClose" class="absolute top-5 right-6 text-main"><span class="iconify text-3xl" data-icon="lucide:x"></span></button>
-    <div class="flex items-center gap-4 mb-2">
-        <a href="https://www.facebook.com/DrCarlosRodas" target="_blank" class="soc-icon fb fb-pulse"><span class="iconify text-[#1877F2] text-xl" data-icon="mdi:facebook"></span></a>
-        <a href="https://wa.me/529993490768" target="_blank" class="soc-icon wa"><span class="iconify text-[#25D366] text-xl" data-icon="mdi:whatsapp"></span></a>
-        <a href="#" class="soc-icon ig"><span class="iconify text-[#E1306C] text-xl" data-icon="mdi:instagram"></span></a>
-    </div>
-    <a href="#inicio" class="mlink text-2xl font-display text-main hover:text-red-400 transition-colors">Inicio</a>
-    <a href="#acerca" class="mlink text-2xl font-display text-main hover:text-red-400 transition-colors">Acerca de</a>
-    <a href="#servicios" class="mlink text-2xl font-display text-main hover:text-red-400 transition-colors">Servicios</a>
-    <a href="#testimonios" class="mlink text-2xl font-display text-main hover:text-red-400 transition-colors">Testimonios</a>
-    <a href="#ubicacion" class="mlink text-2xl font-display text-main hover:text-red-400 transition-colors">Ubicación</a>
-    <a href="#cita" class="mlink text-2xl font-display text-main hover:text-red-400 transition-colors">Contacto</a>
-    <a href="#cita" class="mlink mt-4 bg-red-600 text-white text-lg font-semibold px-8 py-3 rounded-xl">Agendar Cita</a>
-</div>
-
-<!-- ===== HERO ===== -->
-<section id="inicio" class="relative min-h-screen flex items-center overflow-hidden pt-16">
-    <!-- ECG -->
-    <div class="ecg-wrap">
-        <svg class="ecg-track" width="4000" height="70" viewBox="0 0 4000 70">
-            <polyline class="ecg-path" points="0,35 200,35 250,33 280,35 320,10 340,60 350,5 360,50 370,35 500,35 700,35 750,33 780,35 820,10 840,60 850,5 860,50 870,35 1000,35 1200,35 1250,33 1280,35 1320,10 1340,60 1350,5 1360,50 1370,35 1500,35 1700,35 1750,33 1780,35 1820,10 1840,60 1850,5 1860,50 1870,35 2000,35 2200,35 2250,33 2280,35 2320,10 2340,60 2350,5 2360,50 2370,35 2500,35 2700,35 2750,33 2780,35 2820,10 2840,60 2850,5 2860,50 2870,35 3000,35 3200,35 3250,33 3280,35 3320,10 3340,60 3350,5 3360,50 3370,35 3500,35 3700,35 3750,33 3780,35 3820,10 3840,60 3850,5 3860,50 3870,35 4000,35"/>
+    <!-- INTRO CINEMÁTICA -->
+    <div id="intro-overlay">
+        <svg width="300" height="100" viewBox="0 0 300 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path class="ecg-path" d="M0 50 L80 50 L100 50 L110 20 L120 80 L130 10 L140 90 L150 50 L180 50 L190 30 L200 70 L210 50 L300 50" stroke="#ff2e4c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-    </div>
-    <!-- Pulse rings -->
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-        <div class="pulse-ring w-[300px] h-[300px] md:w-[450px] md:h-[450px]" style="margin-left:-150px;margin-top:-150px"></div>
-        <div class="pulse-ring w-[300px] h-[300px] md:w-[450px] md:h-[450px]" style="margin-left:-150px;margin-top:-150px;animation-delay:1s"></div>
-        <div class="pulse-ring w-[300px] h-[300px] md:w-[450px] md:h-[450px]" style="margin-left:-150px;margin-top:-150px;animation-delay:2s"></div>
+        <div class="intro-text">CARDIOVITAL</div>
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-16 grid lg:grid-cols-2 gap-12 items-center">
-        <!-- Left -->
-        <div class="flex flex-col gap-6 text-center lg:text-left">
-            <div>
-                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full card-bg text-red-400 text-xs font-semibold uppercase tracking-[0.15em]">
-                    <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                    Cardiólogo Intervencionista
-                </span>
+    <!-- BOTONES FLOTANTES -->
+    <div class="floating-buttons">
+        <a href="https://wa.me/1234567890?text=Hola,%20quisiera%20agendar%20una%20consulta%20cardiológica" target="_blank" class="float-btn whatsapp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://facebook.com" target="_blank" class="float-btn facebook"><i class="fab fa-facebook-f"></i></a>
+    </div>
+
+    <!-- NAVBAR -->
+    <header id="navbar">
+        <a href="#" class="logo">❤️ Cardio<span>Vital</span></a>
+        <div class="nav-controls">
+            <nav>
+                <ul>
+                    <li><a href="#services" data-i18n="nav_services">Servicios</a></li>
+                    <li><a href="#doctor" data-i18n="nav_doctor">Especialista</a></li>
+                    <li><a href="#booking" data-i18n="nav_contact">Agendar</a></li>
+                </ul>
+            </nav>
+            <button class="toggle-btn" id="lang-toggle">ES</button>
+            <button class="toggle-btn" id="theme-toggle">🌙</button>
+            <a href="#booking" class="btn-nav" data-i18n="nav_appointment">Reservar Ahora</a>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section id="hero">
+        <div class="hero-bg-ecg" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 200%22 fill=%22none%22 stroke=%22%23ff2e4c%22 stroke-width=%223%22><path d=%22M0 100 L300 100 L350 20 L400 180 L450 100 L600 100 L650 20 L700 180 L750 100 L1200 100%22 /></svg>');"></div>
+        <div class="hero-content">
+            <div class="hero-text reveal active">
+                <h1 data-i18n="hero_title">Tu Corazón No Puede Esperar. Tampoco Tu Tranquilidad.</h1>
+                <p data-i18n="hero_desc">No dejes tu salud al azar. Accede a la cardiología de élite con tecnología de monitoreo preventivo 24/7. Detectamos el peligro antes de que sea un problema.</p>
+                <a href="#booking" class="btn-cta" data-i18n="hero_cta">Protege tu Vida Hoy</a>
             </div>
-            <h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight text-main">
-                Tu corazón<br>merece el<br><span class="gradient-text">mejor cuidado</span>
-            </h1>
-            <p class="text-sub text-base md:text-lg leading-relaxed max-w-lg mx-auto lg:mx-0">
-                El Dr. Carlos R. Rodas Cáceres combina experiencia, tecnología de vanguardia y un compromiso genuino con tu bienestar cardiovascular. Más de 15 años salvando vidas.
-            </p>
-            <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                <a href="#cita" class="glow-btn rounded-2xl w-full sm:w-auto">
-                    <div class="glow-btn-inner rounded-2xl py-4 px-8 text-white font-semibold text-base flex items-center justify-center gap-2">
-                        <span class="iconify" data-icon="lucide:calendar-check"></span>Agendar Cita
-                    </div>
-                </a>
-                <a href="https://wa.me/529992972647?text=Hola%20Dr.%20Rodas%2C%20necesito%20atención%20urgente" target="_blank" class="flex items-center gap-3 px-6 py-4 rounded-2xl card-bg transition-all group w-full sm:w-auto justify-center">
-                    <span class="iconify text-red-400 text-xl group-hover:scale-110 transition-transform" data-icon="lucide:phone-call"></span>
-                    <div class="text-left">
-                        <span class="text-dim text-[10px] uppercase tracking-wider block">Urgencias 24/7</span>
-                        <span class="text-main text-sm font-medium">(999) 297 2647</span>
-                    </div>
-                </a>
-            </div>
-            <div class="grid grid-cols-3 gap-4 mt-4">
-                <div class="text-center lg:text-left">
-                    <span class="text-2xl md:text-3xl font-bold gradient-text counter" data-target="15">0</span><span class="text-red-400 text-xl font-bold">+</span>
-                    <p class="text-dim text-[11px] uppercase tracking-wider mt-1">Años de experiencia</p>
-                </div>
-                <div class="text-center lg:text-left">
-                    <span class="text-2xl md:text-3xl font-bold gradient-text counter" data-target="5000">0</span><span class="text-red-400 text-xl font-bold">+</span>
-                    <p class="text-dim text-[11px] uppercase tracking-wider mt-1">Pacientes atendidos</p>
-                </div>
-                <div class="text-center lg:text-left">
-                    <span class="text-2xl md:text-3xl font-bold gradient-text counter" data-target="98">0</span><span class="text-red-400 text-xl font-bold">%</span>
-                    <p class="text-dim text-[11px] uppercase tracking-wider mt-1">Satisfacción</p>
-                </div>
+            <div class="hero-image reveal active" style="transition-delay: 0.3s;">
+                <img src="https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=800&q=80" alt="Cardiólogo revisando corazón con tecnología avanzada">
             </div>
         </div>
+    </section>
 
-        <!-- Right - Doctor Image -->
-        <div class="relative flex justify-center">
-            <div class="relative">
-                <div class="absolute -inset-4 bg-gradient-to-br from-red-500/20 via-transparent to-red-700/20 rounded-3xl blur-xl"></div>
-                <div class="relative img-shine rounded-3xl overflow-hidden" style="border:1px solid rgba(255,255,255,0.08)">
-                    <img src="https://picsum.photos/seed/dr-carlos-rodas-cardio/600/800" alt="Dr. Carlos Rodas" class="w-full max-w-md object-cover rounded-3xl" style="aspect-ratio:3/4">
-                    <div class="absolute inset-0 hero-overlay"></div>
-                </div>
-                <!-- Badge 1 -->
-                <div class="badge-float absolute -bottom-3 -right-3 md:bottom-8 md:-right-5 rounded-2xl p-4 shadow-2xl badge-bg" style="backdrop-filter:blur(10px)">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-red-600/20 flex items-center justify-center"><span class="iconify text-red-400 text-xl" data-icon="lucide:shield-check"></span></div>
-                        <div><p class="text-main text-xs font-bold">Certificado</p><p class="text-dim text-[10px]">Cédula Prof. 12345678</p></div>
-                    </div>
-                </div>
-                <!-- Badge 2 -->
-                <div class="badge-float absolute top-4 -left-3 md:top-8 md:-left-5 rounded-2xl p-3 shadow-2xl badge-bg" style="backdrop-filter:blur(10px);animation-delay:1.5s">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center"><span class="iconify text-amber-400 text-sm" data-icon="lucide:award"></span></div>
-                        <div><p class="text-main text-[11px] font-bold">Intervencionista</p><p class="text-dim text-[9px]">Especialista</p></div>
-                    </div>
-                </div>
+    <!-- STATS -->
+    <section id="stats">
+        <div class="stats-grid">
+            <div class="stat-item reveal">
+                <h3 class="counter" data-target="15">0</h3>
+                <p data-i18n="stat_1">Años Salvando Vidas</p>
+            </div>
+            <div class="stat-item reveal" style="transition-delay: 0.2s;">
+                <h3 class="counter" data-target="5000">0</h3>
+                <p data-i18n="stat_2">Corazones Protegidos</p>
+            </div>
+            <div class="stat-item reveal" style="transition-delay: 0.4s;">
+                <h3 class="counter" data-target="99">0</h3>
+                <p data-i18n="stat_3">Precisión Diagnóstica</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce scroll-indicator">
-        <span class="text-[10px] uppercase tracking-[0.2em] text-dim">Descubre más</span>
-        <span class="iconify text-red-400" data-icon="lucide:chevron-down"></span>
-    </div>
-</section>
-
-<!-- MARQUEE -->
-<div class="py-5 overflow-hidden" style="border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05)">
-    <div class="marquee-track">
-        <div class="flex items-center gap-10 px-6 whitespace-nowrap">
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Cardiología Intervencionista</span><span class="text-red-500">♦</span>
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Hemodinamia</span><span class="text-red-500">♦</span>
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Cateterismo Cardíaco</span><span class="text-red-500">♦</span>
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Angioplastía</span><span class="text-red-500">♦</span>
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Ecocardiografía</span><span class="text-red-500">♦</span>
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Hospital Star Médica</span><span class="text-red-500">♦</span>
+    <!-- SERVICIOS -->
+    <section id="services">
+        <div class="section-title reveal">
+            <h2 data-i18n="services_title">La Diferencia CardioVital</h2>
+            <p data-i18n="services_desc">No solo tratamos enfermedades. Aseguramos tu futuro.</p>
         </div>
-        <div class="flex items-center gap-10 px-6 whitespace-nowrap">
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Cardiología Intervencionista</span><span class="text-red-500">♦</span>
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Hemodinamia</span><span class="text-red-500">♦</span>
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Cateterismo Cardíaco</span><span class="text-red-500">♦</span>
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Angioplastía</span><span class="text-red-500">♦</span>
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Ecocardiografía</span><span class="text-red-500">♦</span>
-            <span class="text-dim text-sm uppercase tracking-[0.2em]">Hospital Star Médica</span><span class="text-red-500">♦</span>
+        <div class="services-grid">
+            <div class="service-card reveal">
+                <div class="card-icon"><i class="fas fa-heartbeat"></i></div>
+                <h3 data-i18n="serv_1_title">Vigilancia Inteligente 24/7</h3>
+                <p data-i18n="serv_1_desc">Olvídate de la incertidumbre. Nuestros dispositivos de monitoreo continuo analizan cada latido en tiempo real, alertando a nuestro equipo médico ante la menor anomalía, incluso mientras duermes.</p>
+            </div>
+            <div class="service-card reveal" style="transition-delay: 0.2s;">
+                <div class="card-icon"><i class="fas fa-x-ray"></i></div>
+                <h3 data-i18n="serv_2_title">Diagnóstico 3D Definitivo</h3>
+                <p data-i18n="serv_2_desc">Adiós a las conjeturas. Utilizamos imagología de ultra-resolución para ver tu corazón como nunca antes. Detectamos riesgos ocultos años antes de que presenten síntomas.</p>
+            </div>
+            <div class="service-card reveal" style="transition-delay: 0.4s;">
+                <div class="card-icon"><i class="fas fa-shield-heart"></i></div>
+                <h3 data-i18n="serv_3_title">Plan de Longevidad Personalizado</h3>
+                <p data-i18n="serv_3_desc">Tu corazón es único. Diseñamos un protocolo exacto de nutrición, biohacking y ejercicio basado en tu ADN para garantizar una vida larga, activa y sin complicaciones.</p>
+            </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- ===== ABOUT ===== -->
-<section id="acerca" class="py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
-            <div class="relative">
-                <div class="absolute -inset-1 bg-gradient-to-br from-red-500/10 to-red-700/5 rounded-3xl"></div>
-                <div class="relative rounded-3xl overflow-hidden" style="border:1px solid rgba(255,255,255,0.08)">
-                    <img src="https://picsum.photos/seed/medical-clinic-office/700/500" alt="Consultorio" class="w-full object-cover rounded-3xl" style="aspect-ratio:4/3">
-                    <div class="absolute inset-0 hero-overlay"></div>
-                    <div class="absolute bottom-6 left-6 right-6 card-bg rounded-2xl p-5" style="border-color:rgba(239,68,68,0.2)">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-xl bg-red-600/20 flex items-center justify-center flex-shrink-0"><span class="iconify text-red-400 text-2xl" data-icon="lucide:stethoscope"></span></div>
-                            <div><p class="text-main font-bold text-sm">Hospital Star Médica</p><p class="text-sub text-xs">Consultorio 830 · Mérida, Yucatán</p></div>
-                        </div>
+    <!-- DOCTOR -->
+    <section id="doctor">
+        <div class="doctor-container">
+            <div class="doctor-img reveal">
+                <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=800&q=80" alt="Dr. Juan Pérez - Cardiólogo Jefe">
+            </div>
+            <div class="doctor-text reveal" style="transition-delay: 0.3s;">
+                <h2 data-i18n="doc_name">Dr. Juan Pérez</h2>
+                <h3 data-i18n="doc_role">Director de CardioVital / Cardiólogo Intervencionista</h3>
+                <p data-i18n="doc_quote">"Un latido es el sonido de la vida. Mi promesa es que el tuyo nunca se detenga. Combinamos intuición clínica con la mejor tecnología del mundo para proteger lo que más amas."</p>
+                <a href="#booking" class="btn-cta" data-i18n="doc_cta">Agenda tu Evaluación</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FORMULARIO DE AGENDAMIENTO -->
+    <section id="booking">
+        <div class="section-title reveal">
+            <h2 data-i18n="form_title">Asegura tu Paz Mental Hoy</h2>
+            <p data-i18n="form_desc">Cupos limitados. Reserva tu evaluación cardíaca integral en menos de 2 minutos.</p>
+        </div>
+        <div class="form-container reveal">
+            <form id="appointment-form" onsubmit="handleSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="form_name">Nombre Completo</label>
+                        <input type="text" class="form-control" required placeholder="Ej: Juan Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="form_phone">Teléfono / WhatsApp</label>
+                        <input type="tel" class="form-control" required placeholder="+34 123 456 789">
                     </div>
                 </div>
-            </div>
-            <div class="flex flex-col gap-6">
-                <span class="text-red-400 text-xs font-semibold uppercase tracking-[0.2em]">Acerca del Doctor</span>
-                <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-main">Experticia que<br><span class="gradient-text">salva vidas</span></h2>
-                <p class="text-sub leading-relaxed">El <strong class="text-main">Dr. Carlos R. Rodas Cáceres</strong> es un médico especialista en Cardiología Intervencionista con formación de primer nivel. Su práctica se enfoca en el diagnóstico y tratamiento minimamente invasivo de enfermedades cardiovasculares.</p>
-                <p class="text-sub leading-relaxed">Como interventor, realiza procedimientos como cateterismo cardíaco, angioplastía coronaria y colocación de stents, ayudando a sus pacientes a recuperar la salud cardiovascular con los mejores estándares de seguridad y eficacia.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-                    <div class="flex items-start gap-3 p-4 rounded-xl card-bg"><span class="iconify text-red-400 text-lg mt-0.5 flex-shrink-0" data-icon="lucide:graduation-cap"></span><div><p class="text-main text-sm font-medium">Especialidad en Cardiología</p><p class="text-dim text-xs">Subespecialidad Intervencionista</p></div></div>
-                    <div class="flex items-start gap-3 p-4 rounded-xl card-bg"><span class="iconify text-red-400 text-lg mt-0.5 flex-shrink-0" data-icon="lucide:building-2"></span><div><p class="text-main text-sm font-medium">Hospital Star Médica</p><p class="text-dim text-xs">Mérida, Yucatán</p></div></div>
-                    <div class="flex items-start gap-3 p-4 rounded-xl card-bg"><span class="iconify text-red-400 text-lg mt-0.5 flex-shrink-0" data-icon="lucide:badge-check"></span><div><p class="text-main text-sm font-medium">Certificado CONACEM</p><p class="text-dim text-xs">Consejo Nacional</p></div></div>
-                    <div class="flex items-start gap-3 p-4 rounded-xl card-bg"><span class="iconify text-red-400 text-lg mt-0.5 flex-shrink-0" data-icon="lucide:clock"></span><div><p class="text-main text-sm font-medium">15+ Años</p><p class="text-dim text-xs">De experiencia clínica</p></div></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<div class="divider max-w-7xl mx-auto" style="height:1px"></div>
-
-<!-- ===== SERVICES ===== -->
-<section id="servicios" class="py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-            <span class="text-red-400 text-xs font-semibold uppercase tracking-[0.2em]">Nuestros Servicios</span>
-            <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight mt-4 text-main">Padecimientos que<br><span class="gradient-text">tratamos</span></h2>
-            <p class="text-sub mt-4">Diagnóstico preciso y tratamiento integral para las principales afecciones cardiovasculares, con tecnología de vanguardia.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="svc-card card-bg card-bg-hover rounded-2xl p-8"><div class="svc-icon w-14 h-14 rounded-xl bg-red-500/10 flex items-center justify-center mb-6"><span class="iconify text-red-400 text-2xl" data-icon="lucide:heart-crack"></span></div><h3 class="text-main font-bold text-lg mb-3">Infarto al Corazón</h3><p class="text-sub text-sm leading-relaxed">Diagnóstico y tratamiento oportuno del infarto agudo al miocardio mediante procedimientos intervencionistas.</p><div class="mt-6 pt-4" style="border-top:1px solid rgba(255,255,255,0.05)"><a href="#cita" class="text-red-400 text-sm font-medium flex items-center gap-2 hover:gap-3 transition-all">Agendar consulta <span class="iconify" data-icon="lucide:arrow-right"></span></a></div></div>
-            <div class="svc-card card-bg card-bg-hover rounded-2xl p-8"><div class="svc-icon w-14 h-14 rounded-xl bg-red-500/10 flex items-center justify-center mb-6"><span class="iconify text-red-400 text-2xl" data-icon="lucide:activity"></span></div><h3 class="text-main font-bold text-lg mb-3">Arritmia Cardiaca</h3><p class="text-sub text-sm leading-relaxed">Evaluación y manejo de trastornos del ritmo cardíaco, desde arritmias benignas hasta las que requieren tratamiento especializado.</p><div class="mt-6 pt-4" style="border-top:1px solid rgba(255,255,255,0.05)"><a href="#cita" class="text-red-400 text-sm font-medium flex items-center gap-2 hover:gap-3 transition-all">Agendar consulta <span class="iconify" data-icon="lucide:arrow-right"></span></a></div></div>
-            <div class="svc-card card-bg card-bg-hover rounded-2xl p-8"><div class="svc-icon w-14 h-14 rounded-xl bg-red-500/10 flex items-center justify-center mb-6"><span class="iconify text-red-400 text-2xl" data-icon="lucide:gauge"></span></div><h3 class="text-main font-bold text-lg mb-3">Hipertensión Arterial</h3><p class="text-sub text-sm leading-relaxed">Control y seguimiento integral de la presión arterial alta para prevenir complicaciones cardiovasculares.</p><div class="mt-6 pt-4" style="border-top:1px solid rgba(255,255,255,0.05)"><a href="#cita" class="text-red-400 text-sm font-medium flex items-center gap-2 hover:gap-3 transition-all">Agendar consulta <span class="iconify" data-icon="lucide:arrow-right"></span></a></div></div>
-            <div class="svc-card card-bg card-bg-hover rounded-2xl p-8"><div class="svc-icon w-14 h-14 rounded-xl bg-red-500/10 flex items-center justify-center mb-6"><span class="iconify text-red-400 text-2xl" data-icon="lucide:pipette"></span></div><h3 class="text-main font-bold text-lg mb-3">Insuficiencia Cardíaca</h3><p class="text-sub text-sm leading-relaxed">Manejo avanzado con enfoque multidisciplinario para mejorar la calidad de vida del paciente.</p><div class="mt-6 pt-4" style="border-top:1px solid rgba(255,255,255,0.05)"><a href="#cita" class="text-red-400 text-sm font-medium flex items-center gap-2 hover:gap-3 transition-all">Agendar consulta <span class="iconify" data-icon="lucide:arrow-right"></span></a></div></div>
-            <div class="svc-card card-bg card-bg-hover rounded-2xl p-8"><div class="svc-icon w-14 h-14 rounded-xl bg-red-500/10 flex items-center justify-center mb-6"><span class="iconify text-red-400 text-2xl" data-icon="lucide:git-branch"></span></div><h3 class="text-main font-bold text-lg mb-3">Enfermedad Coronaria</h3><p class="text-sub text-sm leading-relaxed">Diagnóstico y tratamiento de obstrucciones coronarias mediante cateterismo y angioplastía con stent.</p><div class="mt-6 pt-4" style="border-top:1px solid rgba(255,255,255,0.05)"><a href="#cita" class="text-red-400 text-sm font-medium flex items-center gap-2 hover:gap-3 transition-all">Agendar consulta <span class="iconify" data-icon="lucide:arrow-right"></span></a></div></div>
-            <div class="svc-card card-bg card-bg-hover rounded-2xl p-8"><div class="svc-icon w-14 h-14 rounded-xl bg-red-500/10 flex items-center justify-center mb-6"><span class="iconify text-red-400 text-2xl" data-icon="lucide:valve"></span></div><h3 class="text-main font-bold text-lg mb-3">Valvulopatías</h3><p class="text-sub text-sm leading-relaxed">Evaluación y manejo de enfermedades de las válvulas cardíacas, incluyendo opciones percutáneas.</p><div class="mt-6 pt-4" style="border-top:1px solid rgba(255,255,255,0.05)"><a href="#cita" class="text-red-400 text-sm font-medium flex items-center gap-2 hover:gap-3 transition-all">Agendar consulta <span class="iconify" data-icon="lucide:arrow-right"></span></a></div></div>
-        </div>
-    </div>
-</section>
-
-<div class="divider max-w-7xl mx-auto" style="height:1px"></div>
-
-<!-- ===== PROCESS ===== -->
-<section class="py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-            <span class="text-red-400 text-xs font-semibold uppercase tracking-[0.2em]">¿Cómo funciona?</span>
-            <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight mt-4 text-main">Tu camino hacia un<br><span class="gradient-text">corazón sano</span></h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div class="text-center"><div class="relative mx-auto w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mb-5"><span class="iconify text-red-400 text-2xl" data-icon="lucide:phone"></span><div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center">1</div></div><h3 class="text-main font-bold mb-2">Agenda tu cita</h3><p class="text-dim text-sm">Contacta por WhatsApp o formulario</p></div>
-            <div class="text-center"><div class="relative mx-auto w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mb-5"><span class="iconify text-red-400 text-2xl" data-icon="lucide:stethoscope"></span><div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center">2</div></div><h3 class="text-main font-bold mb-2">Evaluación cardíaca</h3><p class="text-dim text-sm">Diagnóstico preciso con estudios de vanguardia</p></div>
-            <div class="text-center"><div class="relative mx-auto w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mb-5"><span class="iconify text-red-400 text-2xl" data-icon="lucide:clipboard-list"></span><div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center">3</div></div><h3 class="text-main font-bold mb-2">Plan de tratamiento</h3><p class="text-dim text-sm">Solución personalizada para tu condición</p></div>
-            <div class="text-center"><div class="relative mx-auto w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mb-5"><span class="iconify text-red-400 text-2xl" data-icon="lucide:heart-handshake"></span><div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center">4</div></div><h3 class="text-main font-bold mb-2">Seguimiento continuo</h3><p class="text-dim text-sm">Acompañamiento en tu recuperación</p></div>
-        </div>
-    </div>
-</section>
-
-<div class="divider max-w-7xl mx-auto" style="height:1px"></div>
-
-<!-- ===== TESTIMONIALS ===== -->
-<section id="testimonios" class="py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-            <span class="text-red-400 text-xs font-semibold uppercase tracking-[0.2em]">Testimonios</span>
-            <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight mt-4 text-main">Lo que dicen nuestros<br><span class="gradient-text">pacientes</span></h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="card-bg rounded-2xl p-8 transition-all hover:border-red-500/30" style="border-color:rgba(239,68,68,0.12)">
-                <div class="flex items-center gap-1 mb-4"><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span></div>
-                <p class="text-sub text-sm leading-relaxed mb-6 italic">"El Dr. Rodas me salvó la vida. Llegué con un infarto y su intervención rápida y precisa fue increíble. Siempre me sentí acompañada."</p>
-                <div class="flex items-center gap-3 pt-4" style="border-top:1px solid rgba(255,255,255,0.05)"><div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-sm">ML</div><div><p class="text-main text-sm font-semibold">Marina Loredo</p><p class="text-dim text-xs">Paciente intervenida</p></div></div>
-            </div>
-            <div class="card-bg rounded-2xl p-8 transition-all hover:border-red-500/30" style="border-color:rgba(239,68,68,0.12)">
-                <div class="flex items-center gap-1 mb-4"><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span></div>
-                <p class="text-sub text-sm leading-relaxed mb-6 italic">"Después de años con hipertensión mal controlada, el Dr. Rodas logró estabilizar mi presión arterial. Su seguimiento es constante y profesional."</p>
-                <div class="flex items-center gap-3 pt-4" style="border-top:1px solid rgba(255,255,255,0.05)"><div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-bold text-sm">RG</div><div><p class="text-main text-sm font-semibold">Roberto García</p><p class="text-dim text-xs">Paciente de seguimiento</p></div></div>
-            </div>
-            <div class="card-bg rounded-2xl p-8 transition-all hover:border-red-500/30" style="border-color:rgba(239,68,68,0.12)">
-                <div class="flex items-center gap-1 mb-4"><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span><span class="iconify text-amber-400" data-icon="lucide:star"></span></div>
-                <p class="text-sub text-sm leading-relaxed mb-6 italic">"Me realizó un cateterismo y angioplastía con excelentes resultados. La explicación fue clara. Altamente recomendado."</p>
-                <div class="flex items-center gap-3 pt-4" style="border-top:1px solid rgba(255,255,255,0.05)"><div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold text-sm">CP</div><div><p class="text-main text-sm font-semibold">Carolina Pérez</p><p class="text-dim text-xs">Angioplastía coronaria</p></div></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<div class="divider max-w-7xl mx-auto" style="height:1px"></div>
-
-<!-- ===== APPOINTMENT ===== -->
-<section id="cita" class="py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="grid lg:grid-cols-2 gap-16 items-start">
-            <div class="flex flex-col gap-8">
-                <div>
-                    <span class="text-red-400 text-xs font-semibold uppercase tracking-[0.2em]">Agendar Cita</span>
-                    <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight mt-4 text-main">Tu salud cardiovascular<br><span class="gradient-text">no puede esperar</span></h2>
-                    <p class="text-sub mt-4 leading-relaxed">Completa el formulario y te contactaremos por WhatsApp para confirmar tu cita.</p>
-                </div>
-                <div class="flex flex-col gap-4">
-                    <a href="tel:+529993490768" class="flex items-center gap-4 p-5 rounded-2xl card-bg transition-all group"><div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors"><span class="iconify text-red-400 text-xl" data-icon="lucide:phone"></span></div><div><p class="text-dim text-xs uppercase tracking-wider">Teléfono</p><p class="text-main font-semibold">(999) 349 0768</p></div></a>
-                    <a href="https://wa.me/529992972647" target="_blank" class="flex items-center gap-4 p-5 rounded-2xl card-bg transition-all group"><div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors"><span class="iconify text-green-400 text-xl" data-icon="lucide:message-circle"></span></div><div><p class="text-dim text-xs uppercase tracking-wider">Urgencias WhatsApp</p><p class="text-main font-semibold">(999) 297 2647</p></div></a>
-                    <div class="flex items-start gap-4 p-5 rounded-2xl card-bg"><div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0"><span class="iconify text-amber-400 text-xl" data-icon="lucide:map-pin"></span></div><div><p class="text-dim text-xs uppercase tracking-wider">Ubicación</p><p class="text-main font-semibold text-sm">Calle 26 #199 x 15 y 17, Consultorio 830</p><p class="text-sub text-xs">Hospital Star Médica, Mérida Yucatán</p></div></div>
-                </div>
-                <div class="card-bg rounded-2xl p-6">
-                    <h4 class="text-main font-bold text-sm mb-4 flex items-center gap-2"><span class="iconify text-red-400" data-icon="lucide:clock"></span>Horario de Atención</h4>
-                    <div class="space-y-3">
-                        <div class="flex justify-between text-sm"><span class="text-sub">Lunes a Viernes</span><span class="text-main font-medium">4:00 PM - 8:00 PM</span></div>
-                        <div class="flex justify-between text-sm"><span class="text-sub">Sábado</span><span class="text-main font-medium">9:00 AM - 1:00 PM</span></div>
-                        <div class="flex justify-between text-sm"><span class="text-sub">Urgencias</span><span class="text-red-400 font-medium">24/7</span></div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="form_date">Fecha Preferida</label>
+                        <input type="date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="form_reason">Motivo de Consulta</label>
+                        <select class="form-control" required>
+                            <option value="" disabled selected data-i18n="form_reason_opt">Selecciona una opción</option>
+                            <option data-i18n="form_reason_1">Evaluación Preventiva Anual</option>
+                            <option data-i18n="form_reason_2">Síntomas Recientes (Dolor, Palpitaciones)</option>
+                            <option data-i18n="form_reason_3">Segunda Opinión Médica</option>
+                        </select>
                     </div>
                 </div>
-                <div>
-                    <h4 class="text-main font-bold text-sm mb-3">Síguenos</h4>
-                    <div class="flex items-center gap-3">
-                        <a href="https://www.facebook.com/DrCarlosRodas" target="_blank" class="soc-icon fb fb-pulse"><span class="iconify text-[#1877F2] text-xl" data-icon="mdi:facebook"></span></a>
-                        <a href="https://wa.me/529993490768" target="_blank" class="soc-icon wa"><span class="iconify text-[#25D366] text-xl" data-icon="mdi:whatsapp"></span></a>
-                        <a href="#" class="soc-icon ig"><span class="iconify text-[#E1306C] text-xl" data-icon="mdi:instagram"></span></a>
-                    </div>
+                <div class="form-group">
+                    <label data-i18n="form_msg">Mensaje (Opcional)</label>
+                    <textarea class="form-control" rows="3" placeholder="Cuéntanos brevemente tu situación..."></textarea>
                 </div>
-            </div>
-
-            <!-- FORM -->
-            <div>
-                <form id="appointmentForm" class="card-bg rounded-3xl p-8 md:p-10" style="border-color:rgba(239,68,68,0.15)">
-                    <h3 class="font-display text-xl font-bold text-main mb-6">Solicita tu cita</h3>
-                    <div class="mb-5"><label class="text-dim text-xs uppercase tracking-wider block mb-2">Nombre completo</label><input type="text" id="formName" placeholder="Ej: María López García" class="input-bg w-full rounded-xl px-4 py-3 text-sm outline-none" required></div>
-                    <div class="mb-5"><label class="text-dim text-xs uppercase tracking-wider block mb-2">Teléfono</label><input type="tel" id="formPhone" placeholder="(999) 123 4567" class="input-bg w-full rounded-xl px-4 py-3 text-sm outline-none" required></div>
-                    <div class="mb-5">
-                        <label class="text-dim text-xs uppercase tracking-wider block mb-3">Tipo de consulta</label>
-                        <div class="grid grid-cols-2 gap-3" id="consultType">
-                            <div class="frm-opt rounded-xl p-3 text-center" data-value="Consulta General"><div class="frm-chk w-5 h-5 rounded-full border-2 mx-auto mb-2 flex items-center justify-center" style="border-color:rgba(255,255,255,0.2)"><span class="iconify text-white text-xs opt-chk hidden" data-icon="lucide:check"></span></div><span class="text-sub text-xs font-medium">Consulta General</span></div>
-                            <div class="frm-opt rounded-xl p-3 text-center" data-value="Evaluación Cardiológica"><div class="frm-chk w-5 h-5 rounded-full border-2 mx-auto mb-2 flex items-center justify-center" style="border-color:rgba(255,255,255,0.2)"><span class="iconify text-white text-xs opt-chk hidden" data-icon="lucide:check"></span></div><span class="text-sub text-xs font-medium">Evaluación Cardiológica</span></div>
-                            <div class="frm-opt rounded-xl p-3 text-center" data-value="Segunda Opinión"><div class="frm-chk w-5 h-5 rounded-full border-2 mx-auto mb-2 flex items-center justify-center" style="border-color:rgba(255,255,255,0.2)"><span class="iconify text-white text-xs opt-chk hidden" data-icon="lucide:check"></span></div><span class="text-sub text-xs font-medium">Segunda Opinión</span></div>
-                            <div class="frm-opt rounded-xl p-3 text-center" data-value="Urgencia Cardíaca"><div class="frm-chk w-5 h-5 rounded-full border-2 mx-auto mb-2 flex items-center justify-center" style="border-color:rgba(255,255,255,0.2)"><span class="iconify text-white text-xs opt-chk hidden" data-icon="lucide:check"></span></div><span class="text-sub text-xs font-medium">Urgencia Cardíaca</span></div>
-                            <div class="frm-opt rounded-xl p-3 text-center" data-value="Seguimiento"><div class="frm-chk w-5 h-5 rounded-full border-2 mx-auto mb-2 flex items-center justify-center" style="border-color:rgba(255,255,255,0.2)"><span class="iconify text-white text-xs opt-chk hidden" data-icon="lucide:check"></span></div><span class="text-sub text-xs font-medium">Seguimiento</span></div>
-                            <div class="frm-opt rounded-xl p-3 text-center" data-value="Estudio/Ecocardiograma"><div class="frm-chk w-5 h-5 rounded-full border-2 mx-auto mb-2 flex items-center justify-center" style="border-color:rgba(255,255,255,0.2)"><span class="iconify text-white text-xs opt-chk hidden" data-icon="lucide:check"></span></div><span class="text-sub text-xs font-medium">Estudio/Ecocardiograma</span></div>
-                        </div>
-                    </div>
-                    <div class="mb-5"><label class="text-dim text-xs uppercase tracking-wider block mb-2">Fecha preferida</label><input type="date" id="formDate" class="input-bg w-full rounded-xl px-4 py-3 text-sm outline-none"></div>
-                    <div class="mb-6"><label class="text-dim text-xs uppercase tracking-wider block mb-2">Notas adicionales</label><textarea id="formNotes" rows="3" placeholder="Describe brevemente tu síntoma..." class="input-bg w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"></textarea></div>
-                    <button type="submit" class="w-full bg-red-600 hover:bg-red-500 text-white font-semibold py-4 rounded-xl transition-all hover:shadow-lg hover:shadow-red-600/25 flex items-center justify-center gap-2"><span class="iconify text-lg" data-icon="lucide:message-circle"></span>Enviar por WhatsApp</button>
-                    <p class="text-dim text-[11px] text-center mt-4">Serás redirigido a WhatsApp para confirmar tu cita.</p>
-                </form>
-            </div>
+                <button type="submit" class="btn-cta" style="width: 100%;" data-i18n="form_btn">Confirmar Mi Cita Ahora</button>
+                <p style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: var(--text-muted);" data-i18n="form_privacy">* Tus datos están 100% seguros y son confidenciales.</p>
+            </form>
         </div>
-    </div>
-</section>
+    </section>
 
-<div class="divider max-w-7xl mx-auto" style="height:1px"></div>
+    <!-- FOOTER -->
+    <footer>
+        <h2 data-i18n="footer_title">No Dejes Mañana lo que tu Corazón Necesita Hoy.</h2>
+        <p data-i18n="footer_desc">Cada minuto cuenta. Invierte en tu longevidad.</p>
+        <p class="copyright">&copy; 2023 CardioVital | Premium Web Experience</p>
+    </footer>
 
-<!-- ===== UBICACION ===== -->
-<section id="ubicacion" class="py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-            <span class="text-red-400 text-xs font-semibold uppercase tracking-[0.2em]">Ubicación</span>
-            <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight mt-4 text-main">Cómo llegar al<br><span class="gradient-text">consultorio</span></h2>
-            <p class="text-sub mt-4">Nos encontramos en el Hospital Star Médica de Mérida, Yucatán.</p>
-        </div>
-        <div class="rounded-2xl overflow-hidden" style="border:1px solid rgba(255,255,255,0.06)">
-            <iframe id="mapFrame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.5!2d-89.6!3d20.97!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f56715e0c5c4c4f%3A0x6e0e2b0c0c0c0c0c!2sStar%20Medica%20Merida!5e0!3m2!1ses!2smx!4v1" width="100%" style="border:0;height:350px" allowfullscreen="" loading="lazy" class="map-filter"></iframe>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <div class="card-bg rounded-2xl p-6 text-center"><span class="iconify text-red-400 text-2xl mx-auto mb-3" data-icon="lucide:map-pin"></span><h4 class="text-main font-bold text-sm mb-1">Dirección</h4><p class="text-sub text-xs leading-relaxed">Calle 26 #199 x 15 y 17, Consultorio 830, Hospital Star Médica, Mérida, Yucatán</p></div>
-            <div class="card-bg rounded-2xl p-6 text-center"><span class="iconify text-red-400 text-2xl mx-auto mb-3" data-icon="lucide:car"></span><h4 class="text-main font-bold text-sm mb-1">Estacionamiento</h4><p class="text-sub text-xs leading-relaxed">Estacionamiento disponible dentro del hospital con acceso directo al consultorio</p></div>
-            <div class="card-bg rounded-2xl p-6 text-center"><span class="iconify text-red-400 text-2xl mx-auto mb-3" data-icon="lucide:navigation"></span><h4 class="text-main font-bold text-sm mb-1">Cómo llegar</h4><a href="https://maps.google.com/?q=Hospital+Star+Medica+Merida+Yucatan" target="_blank" class="text-red-400 text-xs hover:text-red-300 transition-colors inline-flex items-center gap-1">Abrir en Google Maps <span class="iconify" data-icon="lucide:external-link"></span></a></div>
-        </div>
-        <div class="card-bg rounded-2xl p-8 mt-8">
-            <div class="grid md:grid-cols-2 gap-8">
-                <div>
-                    <h4 class="text-main font-bold text-base mb-4 flex items-center gap-2"><span class="iconify text-red-400" data-icon="lucide:route"></span>Indicaciones</h4>
-                    <ul class="space-y-3">
-                        <li class="flex items-start gap-3 text-sm text-sub"><span class="w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-red-400 text-xs font-bold">1</span></span>Ingresa por la entrada principal sobre la Calle 26</li>
-                        <li class="flex items-start gap-3 text-sm text-sub"><span class="w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-red-400 text-xs font-bold">2</span></span>Toma el elevador hasta el piso 8</li>
-                        <li class="flex items-start gap-3 text-sm text-sub"><span class="w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-red-400 text-xs font-bold">3</span></span>El Consultorio 830 está a la derecha al salir del elevador</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-main font-bold text-base mb-4 flex items-center gap-2"><span class="iconify text-red-400" data-icon="lucide:info"></span>Información adicional</h4>
-                    <div class="space-y-3 text-sm text-sub">
-                        <div class="flex items-center gap-2"><span class="iconify text-green-400 text-sm" data-icon="lucide:check-circle"></span>Acceso para sillas de ruedas</div>
-                        <div class="flex items-center gap-2"><span class="iconify text-green-400 text-sm" data-icon="lucide:check-circle"></span>Estacionamiento subterráneo</div>
-                        <div class="flex items-center gap-2"><span class="iconify text-green-400 text-sm" data-icon="lucide:check-circle"></span>Sala de espera climatizada</div>
-                        <div class="flex items-center gap-2"><span class="iconify text-green-400 text-sm" data-icon="lucide:check-circle"></span>Farmacia y laboratorio en el hospital</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<div class="divider max-w-7xl mx-auto" style="height:1px"></div>
-
-<!-- ===== CTA ===== -->
-<section class="py-24 relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-red-900/20 via-red-600/10 to-red-900/20"></div>
-    <div class="absolute inset-0"><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-red-500/10 rounded-full blur-[100px]"></div></div>
-    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-        <span class="iconify text-red-400 text-5xl mx-auto mb-6" data-icon="lucide:heart-pulse"></span>
-        <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight text-main">¿Sientes algo en tu<br><span class="gradient-text">corazón?</span></h2>
-        <p class="text-sub mt-4 text-lg">No lo ignores. Una consulta a tiempo puede hacer la diferencia.</p>
-        <div class="flex flex-col sm:flex-row items-center gap-4 justify-center mt-8">
-            <a href="https://wa.me/529993490768?text=Hola%20Dr.%20Rodas%2C%20me%20gustaría%20agendar%20una%20cita" target="_blank" class="bg-red-600 hover:bg-red-500 text-white font-semibold py-4 px-8 rounded-2xl transition-all hover:shadow-lg hover:shadow-red-600/30 flex items-center gap-2 w-full sm:w-auto justify-center"><span class="iconify text-lg" data-icon="lucide:message-circle"></span>WhatsApp Ahora</a>
-            <a href="tel:+529993490768" class="cta-out font-semibold py-4 px-8 rounded-2xl w-full sm:w-auto text-center"><span class="text-main">Llamar al Consultorio</span></a>
-        </div>
-    </div>
-</section>
-
-<!-- ===== FOOTER ===== -->
-<footer class="footer-bg py-12" style="border-top:1px solid rgba(255,255,255,0.05);transition:background 0.5s">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div class="md:col-span-2">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center"><span class="iconify text-white text-lg" data-icon="lucide:heart-pulse"></span></div>
-                    <div><span class="font-display text-sm font-bold tracking-wide text-main">Dr. Carlos R. Rodas Cáceres</span><p class="text-[10px] uppercase tracking-[0.15em] text-red-400">Cardiólogo Intervencionista</p></div>
-                </div>
-                <p class="text-dim text-sm leading-relaxed max-w-md mb-4">Compromiso con tu salud cardiovascular. Más de 15 años de experiencia en diagnóstico y tratamiento de enfermedades del corazón.</p>
-                <div class="flex items-center gap-3">
-                    <a href="https://www.facebook.com/DrCarlosRodas" target="_blank" class="soc-icon fb"><span class="iconify text-[#1877F2] text-lg" data-icon="mdi:facebook"></span></a>
-                    <a href="https://wa.me/529993490768" target="_blank" class="soc-icon wa"><span class="iconify text-[#25D366] text-lg" data-icon="mdi:whatsapp"></span></a>
-                    <a href="#" class="soc-icon ig"><span class="iconify text-[#E1306C] text-lg" data-icon="mdi:instagram"></span></a>
-                </div>
-            </div>
-            <div>
-                <h4 class="text-main text-xs font-bold uppercase tracking-wider mb-4">Navegación</h4>
-                <div class="flex flex-col gap-2">
-                    <a href="#inicio" class="text-dim text-sm hover:text-red-400 transition-colors">Inicio</a>
-                    <a href="#acerca" class="text-dim text-sm hover:text-red-400 transition-colors">Acerca de</a>
-                    <a href="#servicios" class="text-dim text-sm hover:text-red-400 transition-colors">Servicios</a>
-                    <a href="#testimonios" class="text-dim text-sm hover:text-red-400 transition-colors">Testimonios</a>
-                    <a href="#ubicacion" class="text-dim text-sm hover:text-red-400 transition-colors">Ubicación</a>
-                    <a href="#cita" class="text-dim text-sm hover:text-red-400 transition-colors">Agendar Cita</a>
-                </div>
-            </div>
-            <div>
-                <h4 class="text-main text-xs font-bold uppercase tracking-wider mb-4">Contacto</h4>
-                <div class="flex flex-col gap-3">
-                    <a href="tel:+529993490768" class="text-dim text-sm hover:text-red-400 transition-colors flex items-center gap-2"><span class="iconify text-xs" data-icon="lucide:phone"></span>(999) 349 0768</a>
-                    <a href="https://wa.me/529992972647" target="_blank" class="text-dim text-sm hover:text-red-400 transition-colors flex items-center gap-2"><span class="iconify text-xs" data-icon="lucide:phone-call"></span>Urgencias: (999) 297 2647</a>
-                    <p class="text-dim text-sm flex items-start gap-2"><span class="iconify text-xs mt-1" data-icon="lucide:map-pin"></span>Consultorio 830, Hospital Star Médica, Mérida</p>
-                </div>
-            </div>
-        </div>
-        <div class="divider mt-8 mb-6" style="height:1px"></div>
-        <p class="text-dim text-xs text-center">&copy; 2025 Dr. Carlos R. Rodas Cáceres. Todos los derechos reservados.</p>
-    </div>
-</footer>
-
-<!-- BACK TO TOP -->
-<button id="btt" class="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg z-50 transition-all hover:bg-red-500 hover:scale-110" style="opacity:0;transform:translateY(16px)">
-    <span class="iconify text-xl" data-icon="lucide:chevron-up"></span>
-</button>
-
-<!-- TOAST -->
-<div id="toast" class="toast-el card-bg" style="border-color:rgba(239,68,68,0.2)"><p id="toastMsg" class="text-main text-sm font-medium flex items-center gap-2"></p></div>
-
-<!-- ===== SCRIPTS ===== -->
-<script>
-(function(){
-    // PRELOADER
-    window.onload = function(){ setTimeout(function(){ document.getElementById('preloader').classList.add('gone'); }, 800); };
-
-    // PARTICLES
-    var pc = document.getElementById('particles');
-    var pn = window.innerWidth < 768 ? 10 : 18;
-    for(var i=0;i<pn;i++){
-        var p = document.createElement('div');
-        p.className = 'particle';
-        var s = Math.random()*4+2;
-        p.style.width = s+'px'; p.style.height = s+'px';
-        p.style.left = Math.random()*100+'%';
-        p.style.animationDuration = (Math.random()*15+10)+'s';
-        p.style.animationDelay = (Math.random()*8)+'s';
-        pc.appendChild(p);
-    }
-
-    // THEME TOGGLE
-    var themeBtn = document.getElementById('themeBtn');
-    var themeIco = document.getElementById('themeIco');
-    var mapFrame = document.getElementById('mapFrame');
-
-    function applyTheme(t){
-        var b = document.body;
-        if(t==='light'){
-            b.classList.remove('dark'); b.classList.add('light');
-            themeIco.setAttribute('data-icon','lucide:sun');
-            if(mapFrame) mapFrame.className = '';
-        } else {
-            b.classList.remove('light'); b.classList.add('dark');
-            themeIco.setAttribute('data-icon','lucide:moon');
-            if(mapFrame) mapFrame.className = 'map-filter';
-        }
-        try{ localStorage.setItem('drTheme',t); }catch(e){}
-    }
-
-    var saved = null;
-    try{ saved = localStorage.getItem('drTheme'); }catch(e){}
-    applyTheme(saved || 'dark');
-
-    themeBtn.addEventListener('click', function(){
-        var isL = document.body.classList.contains('light');
-        applyTheme(isL ? 'dark' : 'light');
-    });
-
-    // MOBILE MENU
-    var mobBtn = document.getElementById('mobBtn');
-    var mobClose = document.getElementById('mobClose');
-    var mobMenu = document.getElementById('mobMenu');
-    var mlinks = document.querySelectorAll('.mlink');
-
-    mobBtn.addEventListener('click', function(){ mobMenu.classList.add('open'); });
-    mobClose.addEventListener('click', function(){ mobMenu.classList.remove('open'); });
-    for(var i=0;i<mlinks.length;i++){ mlinks[i].addEventListener('click', function(){ mobMenu.classList.remove('open'); }); }
-
-    // NAVBAR SCROLL
-    var nav = document.getElementById('navbar');
-    window.addEventListener('scroll', function(){
-        if(window.scrollY > 40) nav.style.borderBottom = '1px solid rgba(239,68,68,0.1)';
-        else nav.style.borderBottom = 'none';
-    });
-
-    // BACK TO TOP
-    var btt = document.getElementById('btt');
-    window.addEventListener('scroll', function(){
-        if(window.scrollY > 500){ btt.style.opacity='1'; btt.style.transform='translateY(0)'; }
-        else { btt.style.opacity='0'; btt.style.transform='translateY(16px)'; }
-    });
-    btt.addEventListener('click', function(){ window.scrollTo({top:0,behavior:'smooth'}); });
-
-    // COUNTER
-    var counters = document.querySelectorAll('.counter');
-    var cDone = false;
-    var cObs = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-            if(e.isIntersecting && !cDone){
-                cDone = true;
-                counters.forEach(function(c){
-                    var target = parseInt(c.getAttribute('data-target'));
-                    var dur = 2000, st = performance.now();
-                    function upd(now){
-                        var p = Math.min((now-st)/dur,1);
-                        var ea = 1-Math.pow(1-p,3);
-                        c.textContent = Math.round(target*ea).toLocaleString();
-                        if(p<1) requestAnimationFrame(upd);
-                    }
-                    requestAnimationFrame(upd);
-                });
-            }
+    <script>
+        // --- 1. INTRO CINEMÁTICA ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('intro-overlay').classList.add('slide-up');
+                document.body.style.overflow = 'auto';
+            }, 3000);
+            document.body.style.overflow = 'hidden';
         });
-    },{threshold:0.5});
-    counters.forEach(function(c){ cObs.observe(c); });
 
-    // FORM OPTIONS
-    var opts = document.querySelectorAll('.frm-opt');
-    var selType = '';
-    opts.forEach(function(o){
-        o.addEventListener('click', function(){
-            opts.forEach(function(x){
-                x.classList.remove('sel');
-                var ch = x.querySelector('.opt-chk'); if(ch) ch.classList.add('hidden');
+        // --- 2. NAVBAR DINÁMICA ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        });
+
+        // --- 3. SCROLL REVEAL ---
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
             });
-            o.classList.add('sel');
-            var ch = o.querySelector('.opt-chk'); if(ch) ch.classList.remove('hidden');
-            selType = o.getAttribute('data-value');
+        }, { threshold: 0.2 });
+        reveals.forEach(reveal => revealObserver.observe(reveal));
+
+        // --- 4. CONTADORES ANIMADOS ---
+        const counters = document.querySelectorAll('.counter');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                    entry.target.classList.add('counted');
+                    const updateCount = () => {
+                        const target = +entry.target.getAttribute('data-target');
+                        const count = +entry.target.innerText;
+                        const speed = 200;
+                        const inc = target / speed;
+                        if (count < target) {
+                            entry.target.innerText = Math.ceil(count + inc);
+                            setTimeout(updateCount, 10);
+                        } else {
+                            entry.target.innerText = target + (target >= 100 ? '+' : '');
+                        }
+                    };
+                    updateCount();
+                }
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(counter => counterObserver.observe(counter));
+
+        // --- 5. CAMBIO DE TEMA ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlElement.setAttribute('data-theme', newTheme);
+            themeToggle.innerText = newTheme === 'dark' ? '🌙' : '☀️';
         });
-    });
 
-    // FORM SUBMIT
-    document.getElementById('appointmentForm').addEventListener('submit', function(e){
-        e.preventDefault();
-        var name = document.getElementById('formName').value.trim();
-        var phone = document.getElementById('formPhone').value.trim();
-        var date = document.getElementById('formDate').value;
-        var notes = document.getElementById('formNotes').value.trim();
+        // --- 6. ENVÍO DE FORMULARIO ---
+        function handleSubmit(event) {
+            event.preventDefault();
+            // Simulación de envío exitoso
+            const form = document.getElementById('appointment-form');
+            const btn = form.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            
+            btn.innerText = "Enviando...";
+            btn.style.opacity = "0.7";
+            
+            setTimeout(() => {
+                alert("✅ Solicitud recibida. Nuestro equipo te contactará en menos de 24 horas para confirmar tu cita.");
+                form.reset();
+                btn.innerText = originalText;
+                btn.style.opacity = "1";
+            }, 1500);
+        }
 
-        if(!name||!phone){ showToast('Completa nombre y teléfono','error'); return; }
-        if(!selType){ showToast('Selecciona un tipo de consulta','error'); return; }
+        // --- 7. SISTEMA DE TRADUCCIÓN (COPYWRITING PERSUASIVO) ---
+        const translations = {
+            es: {
+                nav_services: "Servicios", nav_doctor: "Especialista", nav_contact: "Agendar", nav_appointment: "Reservar Ahora",
+                hero_title: "Tu Corazón No Puede Esperar. Tampoco Tu Tranquilidad.",
+                hero_desc: "No dejes tu salud al azar. Accede a la cardiología de élite con tecnología de monitoreo preventivo 24/7. Detectamos el peligro antes de que sea un problema.",
+                hero_cta: "Protege tu Vida Hoy",
+                stat_1: "Años Salvando Vidas", stat_2: "Corazones Protegidos", stat_3: "Precisión Diagnóstica",
+                services_title: "La Diferencia CardioVital", services_desc: "No solo tratamos enfermedades. Aseguramos tu futuro.",
+                serv_1_title: "Vigilancia Inteligente 24/7", serv_1_desc: "Olvídate de la incertidumbre. Nuestros dispositivos de monitoreo continuo analizan cada latido en tiempo real, alertando a nuestro equipo médico ante la menor anomalía, incluso mientras duermes.",
+                serv_2_title: "Diagnóstico 3D Definitivo", serv_2_desc: "Adiós a las conjeturas. Utilizamos imagología de ultra-resolución para ver tu corazón como nunca antes. Detectamos riesgos ocultos años antes de que presenten síntomas.",
+                serv_3_title: "Plan de Longevidad Personalizado", serv_3_desc: "Tu corazón es único. Diseñamos un protocolo exacto de nutrición, biohacking y ejercicio basado en tu ADN para garantizar una vida larga, activa y sin complicaciones.",
+                doc_name: "Dr. Juan Pérez", doc_role: "Director de CardioVital / Cardiólogo Intervencionista",
+                doc_quote: "\"Un latido es el sonido de la vida. Mi promesa es que el tuyo nunca se detenga. Combinamos intuición clínica con la mejor tecnología del mundo para proteger lo que más amas.\"",
+                doc_cta: "Agenda tu Evaluación",
+                form_title: "Asegura tu Paz Mental Hoy", form_desc: "Cupos limitados. Reserva tu evaluación cardíaca integral en menos de 2 minutos.",
+                form_name: "Nombre Completo", form_phone: "Teléfono / WhatsApp", form_date: "Fecha Preferida", form_reason: "Motivo de Consulta", form_reason_opt: "Selecciona una opción",
+                form_reason_1: "Evaluación Preventiva Anual", form_reason_2: "Síntomas Recientes (Dolor, Palpitaciones)", form_reason_3: "Segunda Opinión Médica",
+                form_msg: "Mensaje (Opcional)", form_btn: "Confirmar Mi Cita Ahora", form_privacy: "* Tus datos están 100% seguros y son confidenciales.",
+                footer_title: "No Dejes Mañana lo que tu Corazón Necesita Hoy.", footer_desc: "Cada minuto cuenta. Invierte en tu longevidad."
+            },
+            en: {
+                nav_services: "Services", nav_doctor: "Specialist", nav_contact: "Book Now", nav_appointment: "Reserve Now",
+                hero_title: "Your Heart Cannot Wait. Neither Can Your Peace of Mind.",
+                hero_desc: "Don't leave your health to chance. Access elite cardiology with 24/7 preventive monitoring technology. We detect danger before it becomes a problem.",
+                hero_cta: "Protect Your Life Today",
+                stat_1: "Years Saving Lives", stat_2: "Hearts Protected", stat_3: "Diagnostic Accuracy",
+                services_title: "The CardioVital Difference", services_desc: "We don't just treat diseases. We secure your future.",
+                serv_1_title: "24/7 Smart Surveillance", serv_1_desc: "Forget the uncertainty. Our continuous monitoring devices analyze every heartbeat in real-time, alerting our medical team to the slightest anomaly, even while you sleep.",
+                serv_2_title: "Definitive 3D Diagnostics", serv_2_desc: "Goodbye to guesswork. We use ultra-resolution imaging to see your heart like never before. We detect hidden risks years before symptoms appear.",
+                serv_3_title: "Personalized Longevity Plan", serv_3_desc: "Your heart is unique. We design an exact protocol of nutrition, biohacking, and exercise based on your DNA to guarantee a long, active, and complication-free life.",
+                doc_name: "Dr. John Perez", doc_role: "CardioVital Director / Interventional Cardiologist",
+                doc_quote: "\"A heartbeat is the sound of life. My promise is that yours will never stop. We combine clinical intuition with the world's best technology to protect what you love most.\"",
+                doc_cta: "Book Your Evaluation",
+                form_title: "Secure Your Peace of Mind Today", form_desc: "Limited spots. Book your comprehensive cardiac evaluation in less than 2 minutes.",
+                form_name: "Full Name", form_phone: "Phone / WhatsApp", form_date: "Preferred Date", form_reason: "Reason for Visit", form_reason_opt: "Select an option",
+                form_reason_1: "Annual Preventive Evaluation", form_reason_2: "Recent Symptoms (Pain, Palpitations)", form_reason_3: "Second Medical Opinion",
+                form_msg: "Message (Optional)", form_btn: "Confirm My Appointment Now", form_privacy: "* Your data is 100% secure and confidential.",
+                footer_title: "Don't Leave for Tomorrow What Your Heart Needs Today.", footer_desc: "Every minute counts. Invest in your longevity."
+            }
+        };
 
-        var msg = '🫀 *SOLICITUD DE CITA*\n\n👤 *Nombre:* '+name+'\n📱 *Teléfono:* '+phone+'\n🏥 *Consulta:* '+selType;
-        if(date) msg += '\n📅 *Fecha:* '+date;
-        if(notes) msg += '\n📝 *Notas:* '+notes;
-        msg += '\n\n_Enviado desde la web del Dr. Rodas_';
+        const langToggle = document.getElementById('lang-toggle');
+        let currentLang = 'es';
 
-        showToast('Redirigiendo a WhatsApp...','ok');
-        setTimeout(function(){ window.open('https://wa.me/529993490768?text='+encodeURIComponent(msg),'_blank'); }, 1000);
-    });
-
-    // TOAST
-    function showToast(msg, type){
-        var t = document.getElementById('toast');
-        var m = document.getElementById('toastMsg');
-        var ico = type==='ok'?'check-circle':'alert-circle';
-        var clr = type==='ok'?'text-green-400':'text-amber-400';
-        m.innerHTML = '<span class="iconify '+clr+'" data-icon="lucide:'+ico+'"></span> '+msg;
-        t.classList.add('show');
-        setTimeout(function(){ t.classList.remove('show'); }, 3500);
-    }
-
-    // SMOOTH SCROLL
-    document.querySelectorAll('a[href^="#"]').forEach(function(a){
-        a.addEventListener('click', function(e){
-            e.preventDefault();
-            var tgt = document.querySelector(this.getAttribute('href'));
-            if(tgt) tgt.scrollIntoView({behavior:'smooth',block:'start'});
+        langToggle.addEventListener('click', () => {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            langToggle.innerText = currentLang.toUpperCase();
+            
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    element.innerText = translations[currentLang][key];
+                }
+            });
         });
-    });
-})();
-</script>
+    </script>
 </body>
 </html>
